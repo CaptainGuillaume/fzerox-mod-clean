@@ -8,6 +8,7 @@
 UNUSED s32 D_800DCE40;
 s32 gGameMode;
 s32 gQueuedGameMode;
+s32 gArcadeModeEnabled = false;
 UNUSED s32 D_800DCE4C;
 UNUSED s32 D_800DCE50;
 UNUSED s32 D_800DCE54;
