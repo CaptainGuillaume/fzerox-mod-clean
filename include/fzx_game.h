@@ -59,7 +59,10 @@ typedef enum ModeSelect {
     /* 5 */ MODE_PRACTICE,
     /* 6 */ MODE_OPTIONS,
     /* 7 */ MODE_CREATE_MACHINE,
+    /* 8 */ MODE_ARCADE,
 } ModeSelect;
+
+extern s32 gArcadeModeEnabled;
 
 typedef enum GameModeChangeState {
     /* 0 */ GAMEMODE_UPDATE,
