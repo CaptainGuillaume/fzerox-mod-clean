@@ -21,7 +21,7 @@ char* gTrackNames[55];
 s32 gSelectedMode = MODE_GP_RACE;
 s32 D_800CD384 = 0;
 
-s32 gModeSubOption[8] = { 0 };
+s32 gModeSubOption[9] = { 0 };
 
 s8 gPlayerSelectionLock[] = { SELECTION_FREE, SELECTION_FREE, SELECTION_FREE, SELECTION_FREE };
 s8 D_800CD3AC[] = { 1, 1, 1, 1 };
@@ -538,7 +538,7 @@ void func_8007E398(void) {
         gPlayerMachineSkins[i] = 0;
     }
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 9; i++) {
         gModeSubOption[i] = 0;
     }
 
