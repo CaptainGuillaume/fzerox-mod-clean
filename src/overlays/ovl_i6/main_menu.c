@@ -363,6 +363,7 @@ s32 MainMenu_Update(void) {
                 Audio_TriggerSystemSE(NA_SE_30);
             }
             if (gInputButtonPressed & BTN_B) {
+                gArcadeModeEnabled = false;
                 D_800CD384 = 0;
                 Audio_TriggerSystemSE(NA_SE_16);
             } else if ((gInputButtonPressed & BTN_START) &&
@@ -399,6 +400,7 @@ s32 MainMenu_Update(void) {
         case 2:
             Math_Rand1();
             if (gInputButtonPressed & BTN_B) {
+                gArcadeModeEnabled = false;
                 Audio_TriggerSystemSE(NA_SE_16);
                 switch (gSelectedMode) {
                     case MODE_GP_RACE:
@@ -467,6 +469,7 @@ s32 MainMenu_Update(void) {
                 }
             }
             if (gInputButtonPressed & BTN_B) {
+                gArcadeModeEnabled = false;
                 Audio_TriggerSystemSE(NA_SE_16);
                 switch (gSelectedMode) {
                     case MODE_GP_RACE:
