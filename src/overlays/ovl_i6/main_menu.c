@@ -188,6 +188,40 @@ s32 MainMenu_Update(void) {
     switch (D_800CD384) {
         case 0:
             previous = gSelectedMode;
+#ifndef EXPANSION_KIT
+            if (gInputPressed & BTN_RIGHT) {
+                if (gSelectedMode == MODE_VS_BATTLE) {
+                    gSelectedMode = MODE_PRACTICE;
+                } else if (gSelectedMode == MODE_OPTIONS) {
+                    gSelectedMode = MODE_ARCADE;
+                } else if ((gSelectedMode % 3) != 2) {
+                    gSelectedMode++;
+                }
+            }
+            if (gInputPressed & BTN_LEFT) {
+                if (gSelectedMode == MODE_PRACTICE) {
+                    gSelectedMode = MODE_VS_BATTLE;
+                } else if (gSelectedMode == MODE_ARCADE) {
+                    gSelectedMode = MODE_OPTIONS;
+                } else if (gSelectedMode % 3) {
+                    gSelectedMode--;
+                }
+            }
+            if (gInputPressed & BTN_DOWN) {
+                if (gSelectedMode == MODE_TIME_ATTACK) {
+                    gSelectedMode = MODE_PRACTICE;
+                } else if ((gSelectedMode / 3) < 2) {
+                    gSelectedMode += 3;
+                }
+            }
+            if (gInputPressed & BTN_UP) {
+                if (gSelectedMode == MODE_ARCADE) {
+                    gSelectedMode = MODE_PRACTICE;
+                } else if ((gSelectedMode / 3) != 0) {
+                    gSelectedMode -= 3;
+                }
+            }
+#else
             if (gInputPressed & BTN_RIGHT) {
                 if ((gSelectedMode % 3) != 2) {
                     gSelectedMode++;
@@ -208,6 +242,7 @@ s32 MainMenu_Update(void) {
                     gSelectedMode -= 3;
                 }
             }
+#endif
 #ifndef EXPANSION_KIT
 #if BUILD_REVISION >= REVISION_B
             if ((gSelectedMode == MODE_VS_BATTLE) && (gControllersConnected < 2)) {
