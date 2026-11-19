@@ -760,6 +760,7 @@ void Object_Init(s32 cmdId, s32 left, s32 top, s8 priority) {
         case OBJECT_MAIN_MENU_MODE_SIGN_5:
         case OBJECT_MAIN_MENU_MODE_SIGN_6:
         case OBJECT_MAIN_MENU_MODE_SIGN_7:
+        case OBJECT_MAIN_MENU_MODE_SIGN_8:
             MainMenu_SignInit(object);
             break;
         case OBJECT_MAIN_MENU_HEADER:
@@ -973,6 +974,7 @@ Gfx* Object_Draw(Gfx* gfx, Object* object) {
         case OBJECT_MAIN_MENU_MODE_SIGN_5:
         case OBJECT_MAIN_MENU_MODE_SIGN_6:
         case OBJECT_MAIN_MENU_MODE_SIGN_7:
+        case OBJECT_MAIN_MENU_MODE_SIGN_8:
             gfx = MainMenu_SignDraw(gfx, object);
             break;
         case OBJECT_MAIN_MENU_HEADER:
