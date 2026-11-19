@@ -264,7 +264,7 @@ Gfx* Minimap_DrawCourseMinimap(Gfx* gfx, s32 numPlayersIndex, s32 playerIndex) {
         gDPFillRectangle(gfx++, playerMarkerX - 1, playerMarkerY - 1, playerMarkerX + 1, playerMarkerY + 1);
     }
     if (numPlayersIndex == 0) {
-        if (gGameMode == GAMEMODE_GP_RACE) {
+        if (GAMEMODE_IS_GP(gGameMode)) {
             // Lead Non-Player Racer Marker
             if (gRacers[0].position == 1) {
                 racer = gRacersByPosition[1];
