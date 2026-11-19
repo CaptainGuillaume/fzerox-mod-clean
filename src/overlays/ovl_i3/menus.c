@@ -5674,7 +5674,7 @@ Gfx* Menus_Draw(Gfx* gfx) {
         // CRASHED
         if (!(gRacers[playerIndex].stateFlags & RACER_STATE_FINISHED) &&
             (gRacers[playerIndex].stateFlags & RACER_STATE_CRASHED) &&
-            !((gGameMode == GAMEMODE_ARCADE) && (sPlayerFinishState[0] == PLAYER_FINISH_SUCCESS_COMPLETE)))
+            !((gGameMode == GAMEMODE_ARCADE) && (sPlayerFinishState[0] == PLAYER_FINISH_SUCCESS_COMPLETE))) {
             if (sPlayerGameoverState[0] == PLAYER_GAMEOVER_NONE) {
                 sPlayerRetireTimer[0] = 0;
                 sPlayerRetireRelativeLeftPos[0] = 200.0f;
