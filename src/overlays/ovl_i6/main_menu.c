@@ -111,6 +111,7 @@ extern s32 D_800CD384;
 extern f32 D_800CE748;
 extern f32 D_800CE74C;
 extern f32 D_800CE750;
+extern s16 gPlayerLives[];
 
 void MainMenu_Init(void) {
     D_800CCFE8 = 3;
@@ -118,6 +119,7 @@ void MainMenu_Init(void) {
     D_800CE748 = D_800CE74C = D_800CE750 = 0.1f;
 #endif
     D_800CD384 = 0;
+    gArcadeModeEnabled = false;
     gNumPlayers = 1;
     if ((gGameFrameCount % 4) == 0) {
         Object_Init(OBJECT_MAIN_MENU_UNLOCK_EVERYTHING, 0, 0, 0);
@@ -141,6 +143,7 @@ void MainMenu_Init(void) {
     Object_Init(OBJECT_MAIN_MENU_MODE_SIGN_5, 0, 0, 10);
     Object_Init(OBJECT_MAIN_MENU_MODE_SIGN_6, 0, 0, 10);
     Object_Init(OBJECT_MAIN_MENU_MODE_SIGN_7, 0, 0, 10);
+    Object_Init(OBJECT_MAIN_MENU_MODE_SIGN_8, 0, 0, 10);
     Object_Init(OBJECT_MAIN_MENU_HEADER, 100, 13, 10);
     Object_Init(OBJECT_MAIN_MENU_SELECT_NUM_PLAYERS, 96, 80, 14);
     Object_Init(OBJECT_MAIN_MENU_OK, 0, 0, 14);
@@ -167,8 +170,8 @@ extern char* gCurrentTrackName;
 extern s32 gCourseIndex;
 extern s32 gTransitionState;
 
-const s32 kDefaultSubOptionLimits[] = { 2, 1, 0, 2, 0, 2, 0, 0 };
-const s32 kMaxSubOptionLimits[] = { 3, 1, 0, 2, 0, 3, 0, 0 };
+const s32 kDefaultSubOptionLimits[] = { 2, 1, 0, 2, 0, 2, 0, 0, 2 };
+const s32 kMaxSubOptionLimits[] = { 3, 1, 0, 2, 0, 3, 0, 0, 3 };
 
 s32 MainMenu_Update(void) {
     s32 previous;
@@ -186,23 +189,23 @@ s32 MainMenu_Update(void) {
         case 0:
             previous = gSelectedMode;
             if (gInputPressed & BTN_RIGHT) {
-                if ((gSelectedMode % 4) != 3) {
+                if ((gSelectedMode % 3) != 2) {
                     gSelectedMode++;
                 }
             }
             if (gInputPressed & BTN_LEFT) {
-                if (gSelectedMode % 4) {
+                if (gSelectedMode % 3) {
                     gSelectedMode--;
                 }
             }
             if (gInputPressed & BTN_DOWN) {
-                if ((gSelectedMode / 4) == 0) {
-                    gSelectedMode += 4;
+                if ((gSelectedMode / 3) < 2) {
+                    gSelectedMode += 3;
                 }
             }
             if (gInputPressed & BTN_UP) {
-                if ((gSelectedMode / 4) != 0) {
-                    gSelectedMode -= 4;
+                if ((gSelectedMode / 3) != 0) {
+                    gSelectedMode -= 3;
                 }
             }
 #ifndef EXPANSION_KIT
@@ -246,6 +249,7 @@ s32 MainMenu_Update(void) {
                     (UNLOCK_EVERYTHING_ROMDATA(Object_Get(OBJECT_MAIN_MENU_UNLOCK_EVERYTHING)) & 0xFFFF) - 0x997A;
                 switch (gSelectedMode) {
                     case MODE_GP_RACE:
+                    case MODE_ARCADE:
                     case MODE_TIME_ATTACK:
                     case MODE_VS_BATTLE:
                     case MODE_PRACTICE:
@@ -350,6 +354,7 @@ s32 MainMenu_Update(void) {
                         break;
                     case MODE_GP_RACE:
                     case MODE_PRACTICE:
+                    case MODE_ARCADE:
                         gNumPlayers = 1;
                         gDifficulty = gAntiPiracyAddedDifficulty + gModeSubOption[gSelectedMode];
                         break;
@@ -362,6 +367,7 @@ s32 MainMenu_Update(void) {
                 Audio_TriggerSystemSE(NA_SE_16);
                 switch (gSelectedMode) {
                     case MODE_GP_RACE:
+                    case MODE_ARCADE:
                     case MODE_TIME_ATTACK:
                     case MODE_VS_BATTLE:
                     case MODE_PRACTICE:
@@ -382,10 +388,16 @@ s32 MainMenu_Update(void) {
                 Audio_SetPlayerMode(gNumPlayers - 1);
                 switch (gSelectedMode) {
                     case MODE_GP_RACE:
+                    case MODE_ARCADE:
                     case MODE_TIME_ATTACK:
                     case MODE_VS_BATTLE:
                     case MODE_PRACTICE:
                         func_8008B1CC();
+                        gArcadeModeEnabled = (gSelectedMode == MODE_ARCADE);
+                        if (gArcadeModeEnabled) {
+                            gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] =
+                                (gDifficulty == NOVICE) ? 2 : ((gDifficulty == STANDARD) ? 1 : 0);
+                        }
                         D_800CD384 = 3;
                         break;
                     default:
@@ -404,6 +416,7 @@ s32 MainMenu_Update(void) {
                         break;
                     case MODE_GP_RACE:
                     case MODE_PRACTICE:
+                    case MODE_ARCADE:
                         if (OBJECT_COUNTER(Object_Get(OBJECT_MAIN_MENU_SELECT_DIFFICULTY)) == 12) {
                             var_v1_2 = true;
                         }
@@ -422,6 +435,7 @@ s32 MainMenu_Update(void) {
                 Audio_TriggerSystemSE(NA_SE_16);
                 switch (gSelectedMode) {
                     case MODE_GP_RACE:
+                    case MODE_ARCADE:
                     case MODE_TIME_ATTACK:
                     case MODE_VS_BATTLE:
                     case MODE_PRACTICE:
@@ -479,7 +493,9 @@ void MainMenu_BackgroundInit(Object* backgroundObj) {
 void MainMenu_SignInit(Object* signObj) {
     s32 index = signObj->cmdId - OBJECT_MAIN_MENU_MODE_SIGN_0;
 
-    TextureCache_LoadCacheTexInfoList_impl(sMenuSignCacheTexInfos[index], false, true);
+    if (index != MODE_ARCADE) {
+        TextureCache_LoadCacheTexInfoList_impl(sMenuSignCacheTexInfos[index], false, true);
+    }
     if (gGameModeChangeState == GAMEMODE_CHANGE_INSTANT(GAMEMODE_CHANGE_INIT)) {
         OBJECT_COUNTER(signObj) = 12;
     }
@@ -547,6 +563,7 @@ const char* D_i6_8011D850[] = {
     "プラクティス",     // Practice
     "オプション",       // Options
     "クリエイトマシン", // Create Machine
+    "ARCADE",
 };
 #endif
 
@@ -598,14 +615,31 @@ Gfx* MainMenu_SignDraw(Gfx* gfx, Object* signObj) {
         OBJECT_COUNTER(signObj) = 0;
     }
 
-    temp1 = (((mode % 4) * 0x40) - (SQ(OBJECT_COUNTER(signObj)) * 2)) + 0x20;
-    temp2 = ((mode / 4) * 0x5B) + 0x26;
+    temp1 = (((mode % 3) * 0x60) - (SQ(OBJECT_COUNTER(signObj)) * 2)) + 0x20;
+    temp2 = ((mode / 3) * 0x41) + 0x23;
 
-    gfx = TextureCache_DrawList_impl(gfx, sMenuSignCacheTexInfos[mode], temp1, temp2, TEXTURE_CACHE_DRAW_TINTED, false,
-                                     false, 1.0f, 1.0f, true);
+    if (mode == MODE_ARCADE) {
+        gDPPipeSync(gfx++);
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        gDPSetCombineMode(gfx++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+        if (mode == gSelectedMode) {
+            gDPSetPrimColor(gfx++, 0, 0, 170, 0, 0, 255);
+        } else {
+            gDPSetPrimColor(gfx++, 0, 0, 80, 0, 0, 180);
+        }
+        gSPTextureRectangle(gfx++, temp1 << 2, temp2 << 2, (temp1 + 64) << 2, (temp2 + 48) << 2, 0, 0, 0, 1 << 10,
+                            1 << 10);
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, 255);
+        gfx = Font_DrawString(gfx, temp1 + ((64 - Font_GetStringWidth("ARCADE", FONT_SET_4, 1)) / 2), temp2 + 19,
+                              "ARCADE", 1, FONT_SET_4, 0);
+    } else {
+        gfx = TextureCache_DrawList_impl(gfx, sMenuSignCacheTexInfos[mode], temp1, temp2, TEXTURE_CACHE_DRAW_TINTED,
+                                         false, false, 1.0f, 1.0f, true);
+    }
 
 #if LANGUAGE == LANGUAGE_JPN
-    if (mode == gSelectedMode) {
+    if ((mode == gSelectedMode) && (mode != MODE_ARCADE)) {
         gfx = Font_DrawString(gfx, (temp1 - (Font_GetStringWidth(D_i6_8011D850[mode], FONT_SET_4, 0) / 2)) + 0x20,
                               temp2 + 0x5B, D_i6_8011D850[mode], 0, FONT_SET_4, 0);
     }
@@ -872,7 +906,7 @@ Gfx* MainMenu_DifficultyDraw(Gfx* gfx, Object* difficultyObj) {
     s32 i;
     s32 temp_s6;
 
-    if (gSelectedMode != MODE_PRACTICE && gSelectedMode != MODE_GP_RACE) {
+    if (gSelectedMode != MODE_PRACTICE && gSelectedMode != MODE_GP_RACE && gSelectedMode != MODE_ARCADE) {
         return gfx;
     }
 
