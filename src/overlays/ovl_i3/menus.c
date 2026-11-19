@@ -3909,7 +3909,10 @@ Gfx* Menus_DrawRaceIntroDisplay(Gfx* gfx, s32 left, s32 top, s32 paddingSize) {
     s32 lrx;
     s32 lry;
 
-    if (gGameMode == GAMEMODE_GP_RACE) {
+    if (gArcadeModeEnabled) {
+        headerWidth = Font_GetStringWidth("ARCADE", FONT_SET_3, 1);
+        strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
+    } else if (gGameMode == GAMEMODE_GP_RACE) {
         headerWidth = Font_GetStringWidth("GP RACE", FONT_SET_3, 1);
         strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
     } else if (gGameMode == GAMEMODE_PRACTICE) {
@@ -3958,7 +3961,16 @@ Gfx* Menus_DrawRaceIntroDisplay(Gfx* gfx, s32 left, s32 top, s32 paddingSize) {
         gfx = Menus_DrawBeveledBox(gfx, boxLeft - 7, top - 35, boxRight + 7, top + 3, 0, 220, 0, 200);
     }
 
-    if (gGameMode == GAMEMODE_GP_RACE) {
+    if (gArcadeModeEnabled) {
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, 255);
+        gfx = Font_DrawString(gfx, (left - (Font_GetStringWidth("ARCADE", FONT_SET_3, 1) / 2)) + 2, top - 14,
+                              "ARCADE", 1, FONT_SET_3, 0);
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 250, 250, 0, 255);
+        gfx = Font_DrawString(gfx, left - (Font_GetStringWidth("ARCADE", FONT_SET_3, 1) / 2), top - 16, "ARCADE", 1,
+                              FONT_SET_3, 0);
+    } else if (gGameMode == GAMEMODE_GP_RACE) {
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, 255);
         gfx = Font_DrawString(gfx, (left - (Font_GetStringWidth("GP RACE", FONT_SET_3, 1) / 2)) + 2, top - 14,
@@ -5680,7 +5692,7 @@ Gfx* Menus_Draw(Gfx* gfx) {
                 sPlayerRetireHorizontalSpeed[0] = -20.0f;
                 sPlayerGameoverState[0] = PLAYER_GAMEOVER_CRASHED;
             }
-            if ((gGameMode == GAMEMODE_GP_RACE) && (sPlayer1Lives <= 0)) {
+            if ((gGameMode == GAMEMODE_GP_RACE) && !gArcadeModeEnabled && (sPlayer1Lives <= 0)) {
                 switch (sPlayerGameoverState[0]) {
                     case PLAYER_GAMEOVER_CRASHED:
                         gfx = Menus_DrawPlayerRetire(gfx, 0);
@@ -5716,7 +5728,15 @@ Gfx* Menus_Draw(Gfx* gfx) {
                                 func_8007E0CC();
                             }
                             sMenuIsBusy = true;
-                            sMenuStateFlags |= MENU_STATE_RETIRE_RESTART;
+                            if (gArcadeModeEnabled && (sPlayer1Lives <= 0)) {
+                                if (!D_i3_80141B78[0]) {
+                                    D_i3_80141B78[0] = true;
+                                    func_8008AA8C();
+                                }
+                                sMenuStateFlags |= MENU_STATE_GP_NEXT_COURSE;
+                            } else {
+                                sMenuStateFlags |= MENU_STATE_RETIRE_RESTART;
+                            }
                         }
                     } else if (sPlayerRetireTimer[0] > 200) {
                         if (gGameMode != GAMEMODE_DEATH_RACE) {
