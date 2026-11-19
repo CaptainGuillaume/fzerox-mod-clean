@@ -2014,6 +2014,7 @@ void Camera_Init(void) {
             Camera_InitMode(gCameras, sCameraSettings, sCameraScriptMgrs);
             break;
         case GAMEMODE_GP_RACE:
+        case GAMEMODE_ARCADE:
         case GAMEMODE_PRACTICE:
         case GAMEMODE_DEATH_RACE:
 #ifndef EXPANSION_KIT
@@ -2502,7 +2503,7 @@ void Camera_UpdateMode(Camera* camera, CameraSettings* cameraSettings, CameraScr
     Camera_UpdateFromSettings(camera, cameraSettings);
     func_8071315C(camera);
     Camera_UpdateProjectionViewMtx(gGfxPool, camera);
-    if ((gGameMode == GAMEMODE_GP_RACE) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_TIME_ATTACK) ||
+    if (GAMEMODE_IS_GP(gGameMode) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_TIME_ATTACK) ||
         (gGameMode == GAMEMODE_DEATH_RACE)) {
         Camera_UpdateEnemyEnginePan(camera);
     }
