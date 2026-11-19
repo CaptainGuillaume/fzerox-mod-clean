@@ -491,11 +491,12 @@ void func_i3_80115E74(void) {
         gRacers[i].id = i;
     }
 
-    if ((gGameMode != GAMEMODE_GP_RACE) || (D_800E5FF0 == 1) || (gTitleDemoState == TITLE_DEMO_ACTIVE) ||
+    if ((!GAMEMODE_IS_GP(gGameMode)) || (D_800E5FF0 == 1) || (gTitleDemoState == TITLE_DEMO_ACTIVE) ||
         (D_i3_8013DBEC != 0) || (gNumPlayers >= 2)) {
         for (racer = gRacers; racer < &gRacers[gTotalRacers]; racer++) {
             switch (gGameMode) {
                 case GAMEMODE_GP_RACE:
+                case GAMEMODE_ARCADE:
                 case GAMEMODE_PRACTICE:
                 case GAMEMODE_TIME_ATTACK:
                 case GAMEMODE_DEATH_RACE:
@@ -516,7 +517,7 @@ void func_i3_80115E74(void) {
         }
     }
     if ((gNumPlayers == 1) && (gTotalRacers != 1)) {
-        if ((gGameMode != GAMEMODE_GP_END_CS) && ((gGameMode != GAMEMODE_GP_RACE) || (D_800E5FF0 == 1) ||
+        if ((gGameMode != GAMEMODE_GP_END_CS) && ((!GAMEMODE_IS_GP(gGameMode)) || (D_800E5FF0 == 1) ||
                                                   (gTitleDemoState == TITLE_DEMO_ACTIVE) || (D_i3_8013DBEC != 0))) {
             for (i = 0; i < 100; i++) {
                 m = (Math_Rand2() % (gTotalRacers - 1)) + 1;
@@ -527,7 +528,7 @@ void func_i3_80115E74(void) {
                 gRacers[k].unk_34D = var_a3;
             }
             var_s5 = 0;
-            if (gGameMode == GAMEMODE_GP_RACE) {
+            if (GAMEMODE_IS_GP(gGameMode)) {
                 m = 0;
                 for (i = 1; i < gTotalRacers; i++) {
 
@@ -623,7 +624,7 @@ void func_i3_80115E74(void) {
             }
         }
     }
-    if ((gGameMode != GAMEMODE_GP_RACE) || (D_800E5FF0 == 1) || ((gCourseIndex % 6) == 0) ||
+    if ((!GAMEMODE_IS_GP(gGameMode)) || (D_800E5FF0 == 1) || ((gCourseIndex % 6) == 0) ||
         (gTitleDemoState == TITLE_DEMO_ACTIVE) || (D_i3_8013DBEC != 0)) {
         tempRacer = gRacers;
         gRacers[0].unk_368 = 0xFF;
@@ -678,7 +679,7 @@ void func_i3_80115E74(void) {
         }
     }
 
-    if (((gGameMode == GAMEMODE_GP_RACE) && (D_i3_8013E94C[gCourseIndex] == 1)) ||
+    if ((GAMEMODE_IS_GP(gGameMode) && (D_i3_8013E94C[gCourseIndex] == 1)) ||
         (gTitleDemoState == TITLE_DEMO_ACTIVE)) {
         var_a1 = 4;
         for (var_a3 = 0; var_a3 < gTotalRacers; var_a3++) {
@@ -906,7 +907,7 @@ void Cpu_InitRacer(Racer* racer) {
     racer->unk_3A0 = gTotalRacers;
     racer->unk_1EC = 2000.0f / SPEED_CONVERSION;
 
-    if (gGameMode == GAMEMODE_GP_RACE) {
+    if (GAMEMODE_IS_GP(gGameMode)) {
         racer->unk_360 = D_i3_8013EBD0[D_i3_8013E7A8[racer->character].unk_02 * 4 + gDifficulty];
         racer->unk_364 = D_i3_8013EC30[D_i3_8013E7A8[racer->character].unk_02 * 4 + gDifficulty] + racer->unk_360;
     }
