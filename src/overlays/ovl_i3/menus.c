@@ -3912,6 +3912,9 @@ Gfx* Menus_DrawRaceIntroDisplay(Gfx* gfx, s32 left, s32 top, s32 paddingSize) {
     if (gGameMode == GAMEMODE_GP_RACE) {
         headerWidth = Font_GetStringWidth("GP RACE", FONT_SET_3, 1);
         strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
+    } else if (gGameMode == GAMEMODE_ARCADE) {
+        headerWidth = Font_GetStringWidth("ARCADE", FONT_SET_3, 1);
+        strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
     } else if (gGameMode == GAMEMODE_PRACTICE) {
         headerWidth = Font_GetStringWidth("PRACTICE", FONT_SET_3, 1);
         strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
@@ -3966,6 +3969,15 @@ Gfx* Menus_DrawRaceIntroDisplay(Gfx* gfx, s32 left, s32 top, s32 paddingSize) {
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, 250, 250, 0, 255);
         gfx = Font_DrawString(gfx, left - (Font_GetStringWidth("GP RACE", FONT_SET_3, 1) / 2), top - 16, "GP RACE", 1,
+                              FONT_SET_3, 0);
+    } else if (gGameMode == GAMEMODE_ARCADE) {
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, 255);
+        gfx = Font_DrawString(gfx, (left - (Font_GetStringWidth("ARCADE", FONT_SET_3, 1) / 2)) + 2, top - 14,
+                              "ARCADE", 1, FONT_SET_3, 0);
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 250, 250, 0, 255);
+        gfx = Font_DrawString(gfx, left - (Font_GetStringWidth("ARCADE", FONT_SET_3, 1) / 2), top - 16, "ARCADE", 1,
                               FONT_SET_3, 0);
     } else if (gGameMode == GAMEMODE_PRACTICE) {
         gDPPipeSync(gfx++);
