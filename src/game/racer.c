@@ -751,6 +751,9 @@ void Racer_DecreaseLife(s32 playerIndex) {
     if (--gPlayerLives[playerIndex] >= 0) {
         Hud_TriggerLivesDecrease();
     }
+    if (gArcadeModeEnabled && (playerIndex == 0) && (gPlayerLives[playerIndex] < 0)) {
+        gPlayerLives[playerIndex] = 0;
+    }
     if (gEnableRaceSfx) {
         Audio_TriggerSystemSE(NA_SE_44);
     }
@@ -1213,7 +1216,8 @@ void func_8008AA8C(void) {
         }
     }
     Racer_UpdateRacePositions();
-    if ((gGameMode == GAMEMODE_GP_RACE) && (gRacers[0].stateFlags & RACER_STATE_FINISHED)) {
+    if ((gGameMode == GAMEMODE_GP_RACE) &&
+        ((gRacers[0].stateFlags & RACER_STATE_FINISHED) || gArcadeModeEnabled)) {
         var_v1 = gTotalRacers - 1;
         while (var_v1 >= 0) {
             if (gRacersByPosition[var_v1]->raceTime != 0) {
