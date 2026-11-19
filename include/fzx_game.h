@@ -25,6 +25,7 @@ typedef enum GameMode {
     /* 0x14 */ GAMEMODE_OPTIONS_MENU,
     /* 0x15 */ GAMEMODE_DEATH_RACE,
     /* 0x16 */ GAMEMODE_EAD_DEMO,
+    /* 0x17 */ GAMEMODE_ARCADE,
 } GameMode;
 
 #define GET_MODE(gamemode) (gamemode & 0x1F)
@@ -59,7 +60,11 @@ typedef enum ModeSelect {
     /* 5 */ MODE_PRACTICE,
     /* 6 */ MODE_OPTIONS,
     /* 7 */ MODE_CREATE_MACHINE,
+    /* 8 */ MODE_ARCADE,
 } ModeSelect;
+
+#define GAMEMODE_IS_GP(mode) (((mode) == GAMEMODE_GP_RACE) || ((mode) == GAMEMODE_ARCADE))
+#define MODE_IS_GP(mode) (((mode) == MODE_GP_RACE) || ((mode) == MODE_ARCADE))
 
 typedef enum GameModeChangeState {
     /* 0 */ GAMEMODE_UPDATE,

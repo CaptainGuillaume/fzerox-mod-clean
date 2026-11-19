@@ -71,7 +71,10 @@ void (*sGamemodeInitFuncs[])(void) = {
     Race_Init,            // GAMEMODE_DEATH_RACE
 #ifdef EXPANSION_KIT
     EADDemo_Init, // GAMEMODE_EAD_DEMO
+#else
+    NULL, // GAMEMODE_EAD_DEMO
 #endif
+    Race_Init, // GAMEMODE_ARCADE
 };
 
 s32 (*sGamemodeUpdateFuncs[])(void) = {
@@ -107,7 +110,10 @@ s32 (*sGamemodeUpdateFuncs[])(void) = {
     Race_Update,            // GAMEMODE_DEATH_RACE
 #ifdef EXPANSION_KIT
     EADDemo_Update, // GAMEMODE_EAD_DEMO
+#else
+    NULL, // GAMEMODE_EAD_DEMO
 #endif
+    Race_Update, // GAMEMODE_ARCADE
 };
 
 Gfx* (*sGamemodeDrawFuncs[])(Gfx*) = {
@@ -143,7 +149,10 @@ Gfx* (*sGamemodeDrawFuncs[])(Gfx*) = {
     Race_Draw,            // GAMEMODE_DEATH_RACE
 #ifdef EXPANSION_KIT
     EADDemo_Draw, // GAMEMODE_EAD_DEMO
+#else
+    NULL, // GAMEMODE_EAD_DEMO
 #endif
+    Race_Draw, // GAMEMODE_ARCADE
 };
 
 extern s16 D_800CD16C;
@@ -293,7 +302,7 @@ void func_80068BC0(void) {
             }
 #endif
             gGameModeChangeState = GAMEMODE_CHANGE_UNK10(GAMEMODE_CHANGE_START);
-            if (gGameMode == GAMEMODE_GP_RACE) {
+            if (GAMEMODE_IS_GP(gGameMode)) {
                 gQueuedGameMode = GAMEMODE_LX_GP_RACE_NEXT_MACHINE_SETTINGS;
             } else {
                 gQueuedGameMode = GAMEMODE_LX_MACHINE_SETTINGS;
@@ -319,6 +328,7 @@ void func_80068DCC(void) {
 
     switch (gGameMode) {
         case GAMEMODE_GP_RACE:
+        case GAMEMODE_ARCADE:
         case GAMEMODE_PRACTICE:
         case GAMEMODE_VS_2P:
         case GAMEMODE_VS_3P:
@@ -413,6 +423,7 @@ void func_80068F04(void) {
             }
             break;
         case GAMEMODE_GP_RACE:
+        case GAMEMODE_ARCADE:
         case GAMEMODE_PRACTICE:
         case GAMEMODE_VS_2P:
         case GAMEMODE_VS_3P:
@@ -491,7 +502,7 @@ void func_800690FC(void) {
             }
             sGamemodeUpdateFuncs[GET_MODE(gGameMode)]();
             if (Transition_Update()) {
-                if (gGameMode == GAMEMODE_GP_RACE) {
+                if (GAMEMODE_IS_GP(gGameMode)) {
                     Hud_ResetLivesChangeCounter();
                 }
                 gGameModeChangeState++;
@@ -538,6 +549,7 @@ void func_800690FC(void) {
 
             switch (gGameMode) {
                 case GAMEMODE_GP_RACE:
+                case GAMEMODE_ARCADE:
                 case GAMEMODE_PRACTICE:
                 case GAMEMODE_VS_2P:
                 case GAMEMODE_VS_3P:
@@ -560,6 +572,7 @@ void func_800690FC(void) {
             sp24 = 0;
             switch (gGameMode) {
                 case GAMEMODE_GP_RACE:
+                case GAMEMODE_ARCADE:
                 case GAMEMODE_PRACTICE:
                 case GAMEMODE_VS_2P:
                 case GAMEMODE_VS_3P:
@@ -646,6 +659,7 @@ void func_800690FC(void) {
 #ifdef EXPANSION_KIT
             switch (gGameMode) {
                 case GAMEMODE_GP_RACE:
+                case GAMEMODE_ARCADE:
                 case GAMEMODE_PRACTICE:
                 case GAMEMODE_VS_2P:
                 case GAMEMODE_VS_3P:

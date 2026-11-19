@@ -908,6 +908,8 @@ s32 MachineSettings_Update(void) {
                     switch (gSelectedMode) {
                         case MODE_GP_RACE:
                             return GAMEMODE_GP_RACE;
+                        case MODE_ARCADE:
+                            return GAMEMODE_ARCADE;
                         case MODE_TIME_ATTACK:
                             return GAMEMODE_TIME_ATTACK;
                         case MODE_PRACTICE:
