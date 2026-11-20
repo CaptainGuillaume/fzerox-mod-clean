@@ -582,7 +582,7 @@ void MachineSelect_Init(void) {
             break;
     }
 
-    if (MODE_IS_GP(gSelectedMode)) {
+    if (gSelectedMode == MODE_GP_RACE) {
         Object_Init(OBJECT_MACHINE_SELECT_DIFFICULTY_CUPS, 0, 0, 12);
     }
     Object_Init(OBJECT_MACHINE_SELECT_STATS_0, 0, 0, 12);
@@ -908,8 +908,6 @@ s32 MachineSettings_Update(void) {
                     switch (gSelectedMode) {
                         case MODE_GP_RACE:
                             return GAMEMODE_GP_RACE;
-                        case MODE_ARCADE:
-                            return GAMEMODE_ARCADE;
                         case MODE_TIME_ATTACK:
                             return GAMEMODE_TIME_ATTACK;
                         case MODE_PRACTICE:
