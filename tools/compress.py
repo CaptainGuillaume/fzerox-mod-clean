@@ -153,7 +153,7 @@ def main(argv):
 
         romOffsetValues[romStartSymbol] = offsetStart
         romOffsetValues[romEndSymbol] = offsetEnd
-        romOffsetValues[vramEndSymbol] = entry.addr + size
+        romOffsetValues[vramEndSymbol] = entry.addr + entry.size
         
         offset += align(entry.size, 0x10)
         if VERBOSE:
