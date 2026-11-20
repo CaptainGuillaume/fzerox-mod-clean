@@ -1213,7 +1213,7 @@ void func_8008AA8C(void) {
         }
     }
     Racer_UpdateRacePositions();
-    if (gGameMode == GAMEMODE_GP_RACE) {
+    if ((gGameMode == GAMEMODE_GP_RACE) && (gRacers[0].stateFlags & RACER_STATE_FINISHED)) {
         var_v1 = gTotalRacers - 1;
         while (var_v1 >= 0) {
             if (gRacersByPosition[var_v1]->raceTime != 0) {
@@ -1399,13 +1399,7 @@ void func_8008B1CC(void) {
         gRacers[i].points = 0;
     }
 
-    if (gGameMode == GAMEMODE_GP_RACE) {
-        static const s16 sArcadeStartingLives[DIFFICULTY_MAX] = { 2, 1, 0, 0 };
-        gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] =
-            sArcadeStartingLives[gDifficulty];
-    } else {
-        gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] = gTotalLives[gDifficulty];
-    }
+    gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] = gTotalLives[gDifficulty];
 }
 
 s32 func_8008B23C(MachineInfo* arg0, MachineInfo* arg1) {
