@@ -1223,7 +1223,11 @@ void func_8008AA8C(void) {
         }
 
         while (var_v1 >= 0) {
-            gRacersByPosition[var_v1]->points += gRacePositionPoints[var_v1];
+            // The player only earns GP points after completing the course.
+            if ((gRacersByPosition[var_v1]->id != 0) ||
+                (gRacersByPosition[var_v1]->stateFlags & RACER_STATE_FINISHED)) {
+                gRacersByPosition[var_v1]->points += gRacePositionPoints[var_v1];
+            }
             var_v1--;
         }
         D_800E5FD6 = D_800E5FD4;
