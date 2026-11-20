@@ -2620,7 +2620,7 @@ void Course_GenerateRandomCourse(void) {
     f32 var_fs1;
 
     // Restore random generation seeding if track is re-done
-    if (GAMEMODE_IS_GP(gGameMode) && (gTitleDemoState == TITLE_DEMO_INACTIVE) &&
+    if ((gGameMode == GAMEMODE_GP_RACE) && (gTitleDemoState == TITLE_DEMO_INACTIVE) &&
         (gCourseIndex == gLastRandomCourseIndex)) {
         Math_Rand1Init(sRandomCourseInitSeed1, sRandomCourseInitMask1);
         Math_Rand2Init(sRandomCourseInitSeed2, sRandomCourseInitMask2);
