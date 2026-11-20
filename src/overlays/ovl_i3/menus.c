@@ -13,6 +13,8 @@
 #include "fzx_camera.h"
 #include "fzx_font.h"
 #include "controller.h"
+
+extern s16 D_800F80C4;
 #include ASSET_HEADER(course_track_gfx.h)
 #include ASSET_HEADER(machine_custom_gfx.h)
 #include ASSET_HEADER(hud_gfx.h)
@@ -5681,24 +5683,13 @@ Gfx* Menus_Draw(Gfx* gfx) {
                 sPlayerGameoverState[0] = PLAYER_GAMEOVER_CRASHED;
             }
             if ((gGameMode == GAMEMODE_GP_RACE) && (sPlayer1Lives <= 0)) {
-                switch (sPlayerGameoverState[0]) {
-                    case PLAYER_GAMEOVER_CRASHED:
-                        gfx = Menus_DrawPlayerRetire(gfx, 0);
-                        if (sPlayerRetireTimer[0] > 500) {
-                            sPlayerGameoverState[0] = PLAYER_GAMEOVER_DISPLAY;
-                            Menus_InitGameover(0);
-                            if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
-#ifndef EXPANSION_KIT
-                                Audio_RomBgmStart(BGM_GAMEOVER);
-#else
-                                func_8070DAD4(BGM_GAMEOVER);
-#endif
-                            }
-                        }
-                        break;
-                    case PLAYER_GAMEOVER_DISPLAY:
-                        gfx = Menus_DrawGameover(gfx, 0);
-                        break;
+                gfx = Menus_DrawPlayerRetire(gfx, 0);
+                if ((sPlayerRetireTimer[0] > 500) && !sMenuIsBusy) {
+                    // Arcade runs continue to the next course when the player has no lives left.
+                    // Clear the pending retirement penalty before using the normal GP course transition.
+                    D_800F80C4 = 0;
+                    sMenuIsBusy = true;
+                    sMenuStateFlags |= MENU_STATE_GP_NEXT_COURSE;
                 }
             } else {
                 gfx = Menus_DrawPlayerRetire(gfx, 0);
