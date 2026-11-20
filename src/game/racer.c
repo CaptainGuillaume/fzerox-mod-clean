@@ -343,6 +343,7 @@ s16 gSettingVsCom = 1;
 f32 D_800CE4D8 = 2000.0f;
 
 s8 gTotalLives[] = { 5, 4, 3, 2 };
+s8 gArcadeTotalLives[] = { 2, 1, 0, 0 };
 
 Vec3s sVenuePipeFogColors[] = {
     { 140, 220, 255 }, { 205, 0, 0 }, { 200, 255, 0 },   { 55, 55, 0 }, { 140, 220, 255 }, { 205, 0, 0 },
@@ -592,7 +593,7 @@ void Racer_SetupStartPositions(void) {
     if ((gGameMode != GAMEMODE_RECORDS) && (gGameMode != GAMEMODE_GP_END_CS) &&
         (gTitleDemoState == TITLE_DEMO_INACTIVE) && (gGameMode != GAMEMODE_COURSE_EDIT)) {
 #endif
-        if ((gGameMode == GAMEMODE_GP_RACE) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_DEATH_RACE)) {
+        if (GAMEMODE_IS_GP(gGameMode) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_DEATH_RACE)) {
             height = 1.99f;
         } else {
             height = 0;
@@ -682,7 +683,7 @@ void Racer_UpdateRivalRacer(void) {
     Racer* var_v0;
     Racer* var_v1;
 
-    if ((gGameMode != GAMEMODE_GP_RACE) || ((gTotalRacers - gRacersRetired) < 2) ||
+    if ((!GAMEMODE_IS_GP(gGameMode)) || ((gTotalRacers - gRacersRetired) < 2) ||
         (gTitleDemoState != TITLE_DEMO_INACTIVE)) {
         sRivalRacer = NULL;
         return;
@@ -778,9 +779,11 @@ void Racer_RetireRacer(Racer* racer) {
             }
         }
         racer->raceDistancePosition = (sRaceFrameCount + ((gTotalRacers - racer->position) / 10.0f)) - 600000.0f;
-        if (gGameMode == GAMEMODE_GP_RACE) {
+        if (GAMEMODE_IS_GP(gGameMode)) {
             if (racer->id < gNumPlayers) {
-                D_800F80C4 = -1;
+                if ((gGameMode != GAMEMODE_ARCADE) || (gPlayerLives[racer->id] > 0)) {
+                    D_800F80C4 = -1;
+                }
             }
             if (racer == sRivalRacer) {
                 Racer_UpdateRivalRacer();
@@ -1213,7 +1216,8 @@ void func_8008AA8C(void) {
         }
     }
     Racer_UpdateRacePositions();
-    if (gGameMode == GAMEMODE_GP_RACE) {
+    if (((gGameMode == GAMEMODE_GP_RACE) && (gRacers[0].stateFlags & RACER_STATE_FINISHED)) ||
+        (gGameMode == GAMEMODE_ARCADE)) {
         var_v1 = gTotalRacers - 1;
         while (var_v1 >= 0) {
             if (gRacersByPosition[var_v1]->raceTime != 0) {
@@ -1223,7 +1227,10 @@ void func_8008AA8C(void) {
         }
 
         while (var_v1 >= 0) {
-            gRacersByPosition[var_v1]->points += gRacePositionPoints[var_v1];
+            if ((gRacersByPosition[var_v1]->id != 0) ||
+                (gRacersByPosition[var_v1]->stateFlags & RACER_STATE_FINISHED)) {
+                gRacersByPosition[var_v1]->points += gRacePositionPoints[var_v1];
+            }
             var_v1--;
         }
         D_800E5FD6 = D_800E5FD4;
@@ -1399,7 +1406,7 @@ void func_8008B1CC(void) {
         gRacers[i].points = 0;
     }
 
-    if (gGameMode == GAMEMODE_GP_RACE) {
+    if (gGameMode == GAMEMODE_ARCADE) {
         static const s16 sArcadeStartingLives[DIFFICULTY_MAX] = { 2, 1, 0, 0 };
         gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] =
             sArcadeStartingLives[gDifficulty];
@@ -1705,7 +1712,7 @@ void Racer_Init(void) {
             gPlayerRacersFinished = 0;
     sCourseHalfLength = gCurrentCourseInfo->length * 0.5;
     sCourseNegativeHalfLength = -sCourseHalfLength;
-    if (gGameMode != GAMEMODE_GP_RACE) {
+    if (!GAMEMODE_IS_GP(gGameMode)) {
         D_800E5FD6 = 0;
     }
     D_800E5FD4 = D_800E5FD6;
@@ -1783,7 +1790,7 @@ void Racer_Init(void) {
         }
     }
 
-    if ((gGameMode == GAMEMODE_GP_RACE) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_DEATH_RACE)) {
+    if (GAMEMODE_IS_GP(gGameMode) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_DEATH_RACE)) {
         D_800F80A4 = 7.0f;
     } else {
         D_800F80A4 = 5.0f;
@@ -2216,7 +2223,7 @@ void func_8008DBB8(Racer* arg0, s32 arg1) {
 
     D_800E5FD4++;
     gRacersKOd++;
-    if ((gGameMode == GAMEMODE_GP_RACE) && (gRacersKOd == 5)) {
+    if (GAMEMODE_IS_GP(gGameMode) && (gRacersKOd == 5)) {
         gPlayerLives[0]++;
         func_i3_80128D8C();
         Hud_TriggerLivesIncrease();
@@ -5503,7 +5510,7 @@ void Racer_Update(void) {
                 break;
             case 30:
                 if (gRacers[0].stateFlags & RACER_STATE_FINISHED) {
-                    if ((gGameMode == GAMEMODE_GP_RACE) || (gGameMode == GAMEMODE_DEATH_RACE)) {
+                    if (GAMEMODE_IS_GP(gGameMode) || (gGameMode == GAMEMODE_DEATH_RACE)) {
                         Audio_TriggerSystemSE(NA_SE_61);
                         break;
                     } else if (gGameMode == GAMEMODE_TIME_ATTACK) {
@@ -5516,7 +5523,7 @@ void Racer_Update(void) {
                 }
                 break;
             case 120:
-                if ((gGameMode == GAMEMODE_GP_RACE) && (gRacers[0].stateFlags & RACER_STATE_FINISHED) &&
+                if (GAMEMODE_IS_GP(gGameMode) && (gRacers[0].stateFlags & RACER_STATE_FINISHED) &&
                     (gRacers[0].position == 1)) {
                     Audio_TriggerSystemSE(NA_SE_51);
                 }
@@ -6806,7 +6813,7 @@ block_115:
             // FAKE
             if (1) {}
 
-            if ((gGameMode == GAMEMODE_GP_RACE) && (sRivalRacer != NULL) && (sRivalRacer->machineLod != 0) &&
+            if (GAMEMODE_IS_GP(gGameMode) && (sRivalRacer != NULL) && (sRivalRacer->machineLod != 0) &&
                 !(sRivalRacer->stateFlags & (RACER_STATE_CRASHED | RACER_STATE_FINISHED)) &&
                 (gRacers[0].position >= sRivalRacer->position)) {
                 temp_fs4 = sRivalRacer->segmentPositionInfo.pos.x + (20.0f * sRivalRacer->trueBasis.y.x);
