@@ -1353,7 +1353,7 @@ Gfx* Hud_DrawRacePortraits(Gfx* gfx) {
                             Math_Round(portraitBaseYPos + sPortraitYPosOffsets[i] + portraitHeight) << 2, 0, 0, 0,
                             Math_Round(1024.0f / scale), Math_Round(1024.0f / scale));
 
-        if (!GAMEMODE_IS_GP(gGameMode)) {
+        if (gGameMode != GAMEMODE_GP_RACE) {
             break;
         }
 
@@ -1695,7 +1695,7 @@ Gfx* Hud_DrawKOStars(Gfx* gfx, s32 numPlayersIndex, s32 playerIndex) {
     s32 left;
     s32 top;
 
-    if (!(GAMEMODE_IS_GP(gGameMode) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_DEATH_RACE))) {
+    if (!((gGameMode == GAMEMODE_GP_RACE) || (gGameMode == GAMEMODE_PRACTICE) || (gGameMode == GAMEMODE_DEATH_RACE))) {
         return gfx;
     }
 
@@ -1728,7 +1728,7 @@ Gfx* Hud_DrawPlayerLives(Gfx* gfx, s32 numPlayersIndex, s32 playerIndex) {
     s32 left;
     s32 top;
 
-    if (!GAMEMODE_IS_GP(gGameMode)) {
+    if (gGameMode != GAMEMODE_GP_RACE) {
         return gfx;
     }
 
