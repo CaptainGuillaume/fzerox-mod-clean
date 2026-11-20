@@ -1213,7 +1213,7 @@ void func_8008AA8C(void) {
         }
     }
     Racer_UpdateRacePositions();
-    if ((gGameMode == GAMEMODE_GP_RACE) && (gRacers[0].stateFlags & RACER_STATE_FINISHED)) {
+    if (gGameMode == GAMEMODE_GP_RACE) {
         var_v1 = gTotalRacers - 1;
         while (var_v1 >= 0) {
             if (gRacersByPosition[var_v1]->raceTime != 0) {
