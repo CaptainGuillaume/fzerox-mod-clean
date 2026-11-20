@@ -1223,11 +1223,7 @@ void func_8008AA8C(void) {
         }
 
         while (var_v1 >= 0) {
-            // An eliminated player does not earn GP points for this course.
-            if ((gRacersByPosition[var_v1]->id != 0) ||
-                !(gRacersByPosition[var_v1]->stateFlags & RACER_STATE_CRASHED)) {
-                gRacersByPosition[var_v1]->points += gRacePositionPoints[var_v1];
-            }
+            gRacersByPosition[var_v1]->points += gRacePositionPoints[var_v1];
             var_v1--;
         }
         D_800E5FD6 = D_800E5FD4;
