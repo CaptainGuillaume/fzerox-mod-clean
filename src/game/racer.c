@@ -1399,7 +1399,13 @@ void func_8008B1CC(void) {
         gRacers[i].points = 0;
     }
 
-    gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] = gTotalLives[gDifficulty];
+    if (gGameMode == GAMEMODE_GP_RACE) {
+        static const s16 sArcadeStartingLives[DIFFICULTY_MAX] = { 2, 1, 0, 0 };
+        gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] =
+            sArcadeStartingLives[gDifficulty];
+    } else {
+        gPlayerLives[0] = gPlayerLives[1] = gPlayerLives[2] = gPlayerLives[3] = gTotalLives[gDifficulty];
+    }
 }
 
 s32 func_8008B23C(MachineInfo* arg0, MachineInfo* arg1) {
