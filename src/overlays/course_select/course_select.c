@@ -449,7 +449,7 @@ void CourseSelect_Init(void) {
     Object_Init(OBJECT_COURSE_SELECT_CUP_2, 0, -100, 6);
     Object_Init(OBJECT_COURSE_SELECT_CUP_1, 0, -100, 6);
     Object_Init(OBJECT_COURSE_SELECT_CUP_0, 0, -100, 6);
-    if (!MODE_IS_GP(gSelectedMode)) {
+    if (gSelectedMode != MODE_GP_RACE) {
         Object_Init(OBJECT_COURSE_SELECT_ARROWS, 0, 0, 8);
     }
     Object_Init(OBJECT_COURSE_SELECT_NAME, 0, 0, 8);
@@ -693,7 +693,7 @@ s32 CourseSelect_Update(void) {
                 if (gCupSelectOption == 4) {
                     sCourseSelectTrackNo = 0;
                     sCourseSelectState = COURSE_SELECT_AWAIT_OK;
-                } else if (MODE_IS_GP(gSelectedMode)) {
+                } else if (gSelectedMode == MODE_GP_RACE) {
                     if (gCupSelectOption >= 10) {
 #ifndef EXPANSION_KIT
                         gCourseIndex = COURSE_EDIT_1;
@@ -808,7 +808,7 @@ s32 CourseSelect_Update(void) {
             break;
         case COURSE_SELECT_AWAIT_OK:
             if (gInputButtonPressed & BTN_B) {
-                if (MODE_IS_GP(gSelectedMode) || (gCupSelectOption == 4)) {
+                if ((gSelectedMode == MODE_GP_RACE) || (gCupSelectOption == 4)) {
                     sCourseSelectState = COURSE_SELECT_CUP_SELECT;
                 } else {
                     sCourseSelectState = COURSE_SELECT_CHOOSE_COURSE;
@@ -1168,7 +1168,7 @@ Gfx* CourseSelect_CupDraw(Gfx* gfx, Object* cupObj) {
                                      OBJECT_TOP(cupObj) + yOffset, TEXTURE_CACHE_DRAW_TINTED, false, false, 1.0f, 1.0f,
                                      false);
 
-    if (MODE_IS_GP(gSelectedMode) && (spA4 <= JOKER_CUP)) {
+    if ((gSelectedMode == MODE_GP_RACE) && (spA4 <= JOKER_CUP)) {
         alpha = ((OBJECT_TOP(cupObj) - 49) * 255) / 36;
         if (cupOption == spA4) {
             gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, 255);
@@ -1185,7 +1185,7 @@ Gfx* CourseSelect_CupDraw(Gfx* gfx, Object* cupObj) {
 
 #ifdef EXPANSION_KIT
     cupDifficultiesCleared = D_8079FB28[spA4 - DD_1_CUP];
-    if (MODE_IS_GP(gSelectedMode) && (spA4 >= DD_1_CUP)) {
+    if ((gSelectedMode == MODE_GP_RACE) && (spA4 >= DD_1_CUP)) {
         alpha = ((OBJECT_TOP(cupObj) - 49) * 255) / 121;
         if (cupOption == spA4) {
             gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, 255);
@@ -1544,7 +1544,7 @@ void CourseSelect_CupUpdate(Object* cupObj) {
                 case COURSE_SELECT_AWAIT_OK:
                 case COURSE_SELECT_CONTINUE:
                 default:
-                    if (MODE_IS_GP(gSelectedMode)) {
+                    if (gSelectedMode == MODE_GP_RACE) {
                         Object_LerpPosYToTarget(cupObj, 0x31);
                     } else {
                         Object_LerpPosYToTarget(cupObj, 0x2D);
