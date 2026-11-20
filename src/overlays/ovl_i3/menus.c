@@ -261,7 +261,7 @@ void Menus_Update(void) {
                 if (gCourseIndex < COURSE_EDIT_1) {
                     Save_SaveCourseRecordProfiles(gCourseIndex);
                 }
-            } else if (gGameMode == GAMEMODE_GP_RACE) {
+            } else if (GAMEMODE_IS_GP(gGameMode)) {
                 RecordsEntry_UpdateRaceStats(gCourseIndex);
             } else if (gGameMode == GAMEMODE_DEATH_RACE) {
                 func_80089BD0();
@@ -301,7 +301,7 @@ void Menus_Update(void) {
                 sMenuOptionTriggered = true;
             }
             if (sMenuStateFlags & MENU_STATE_GP_NEXT_COURSE) {
-                if ((gNumPlayers == 1) && (gGameMode == GAMEMODE_GP_RACE)) {
+                if ((gNumPlayers == 1) && GAMEMODE_IS_GP(gGameMode)) {
                     for (i = 0; i < gTotalRacers; i++) {
                         D_80115D50[i] = gRacers[i].position;
                     }
@@ -1739,7 +1739,7 @@ Gfx* Menus_DrawFinish(Gfx* gfx, s32 playerIndex) {
 
     sPlayerWinnerLoserFinishGameoverTimer[playerIndex]++;
     if (sPlayerWinnerLoserFinishGameoverTimer[playerIndex] == 2) {
-        if ((gGameMode == GAMEMODE_TIME_ATTACK) || (gGameMode == GAMEMODE_GP_RACE)) {
+        if ((gGameMode == GAMEMODE_TIME_ATTACK) || GAMEMODE_IS_GP(gGameMode)) {
             if (gTotalLapCount == 3) {
                 sMenuStateFlags |= MENU_STATE_RACE_FINISH_SAVE;
             }
@@ -3515,7 +3515,7 @@ Gfx* Menus_DrawGpRacePause(Gfx* gfx) {
                     if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
                         func_8007E0CC();
                     }
-                    if ((gGameMode == GAMEMODE_GP_RACE) && (gRacers[0].id < gNumPlayers)) {
+                    if (GAMEMODE_IS_GP(gGameMode) && (gRacers[0].id < gNumPlayers)) {
                         gPlayerLives[gRacers[0].id]--;
                         if (gPlayerLives[gRacers[0].id] >= 0) {
                             Hud_TriggerLivesDecrease();
@@ -3558,7 +3558,7 @@ Gfx* Menus_DrawGpRacePause(Gfx* gfx) {
                     if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
                         func_8007E0CC();
                     }
-                    if ((gGameMode == GAMEMODE_GP_RACE) && (gRacers[0].id < gNumPlayers)) {
+                    if (GAMEMODE_IS_GP(gGameMode) && (gRacers[0].id < gNumPlayers)) {
                         gPlayerLives[gRacers[0].id]--;
                         if (gPlayerLives[gRacers[0].id] >= 0) {
                             Hud_TriggerLivesDecrease();
@@ -3914,6 +3914,9 @@ Gfx* Menus_DrawRaceIntroDisplay(Gfx* gfx, s32 left, s32 top, s32 paddingSize) {
     if (gGameMode == GAMEMODE_GP_RACE) {
         headerWidth = Font_GetStringWidth("GP RACE", FONT_SET_3, 1);
         strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
+    } else if (gGameMode == GAMEMODE_ARCADE) {
+        headerWidth = Font_GetStringWidth("ARCADE", FONT_SET_3, 1);
+        strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
     } else if (gGameMode == GAMEMODE_PRACTICE) {
         headerWidth = Font_GetStringWidth("PRACTICE", FONT_SET_3, 1);
         strWidth = Font_GetStringWidth(gDifficultyNames[gDifficulty], FONT_SET_3, 1);
@@ -3968,6 +3971,15 @@ Gfx* Menus_DrawRaceIntroDisplay(Gfx* gfx, s32 left, s32 top, s32 paddingSize) {
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, 250, 250, 0, 255);
         gfx = Font_DrawString(gfx, left - (Font_GetStringWidth("GP RACE", FONT_SET_3, 1) / 2), top - 16, "GP RACE", 1,
+                              FONT_SET_3, 0);
+    } else if (gGameMode == GAMEMODE_ARCADE) {
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, 255);
+        gfx = Font_DrawString(gfx, (left - (Font_GetStringWidth("ARCADE", FONT_SET_3, 1) / 2)) + 2, top - 14,
+                              "ARCADE", 1, FONT_SET_3, 0);
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 250, 250, 0, 255);
+        gfx = Font_DrawString(gfx, left - (Font_GetStringWidth("ARCADE", FONT_SET_3, 1) / 2), top - 16, "ARCADE", 1,
                               FONT_SET_3, 0);
     } else if (gGameMode == GAMEMODE_PRACTICE) {
         gDPPipeSync(gfx++);
@@ -4867,7 +4879,7 @@ Gfx* Menus_DrawGpResultsScreen(Gfx* gfx, s32 playerIndex) {
         for (i = 0; i < gTotalRacers; i++) {
             scrollTop = (58 + i * 25) - sGpResultsRankingScrollPosition;
             if (scrollTop > 20 && scrollTop < 220) {
-                if (gGameMode == GAMEMODE_GP_RACE) {
+                if (GAMEMODE_IS_GP(gGameMode)) {
                     gfx = Menus_DrawResultsRankingCharacterPortrait(
                         gfx, gRacersByPosition[i]->id, gRacersByPosition[i]->character, 45,
                         (s32) ((55 + i * 25) - sGpResultsRankingScrollPosition), 0.75f);
@@ -4919,7 +4931,7 @@ Gfx* Menus_DrawGpResultsScreen(Gfx* gfx, s32 playerIndex) {
                     } else {
                         gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, 255);
                     }
-                    if (gGameMode == GAMEMODE_GP_RACE) {
+                    if (GAMEMODE_IS_GP(gGameMode)) {
                         gfx =
                             Hud_DrawTimerScisThousandths(gfx, gRacersByPosition[i]->raceTime, 213,
                                                          (s32) ((58 + i * 25) - sGpResultsRankingScrollPosition), 1.0f);
@@ -4962,7 +4974,7 @@ Gfx* Menus_DrawGpResultsScreen(Gfx* gfx, s32 playerIndex) {
     }
     if (sPlayerResultsTimer[playerIndex] >= 30060) {
         sPlayerResultsTimer[playerIndex] = 0;
-        if (gGameMode == GAMEMODE_GP_RACE) {
+        if (GAMEMODE_IS_GP(gGameMode)) {
             sGpRaceResultsState = GP_RESULTS_TOTAL_RANKING;
         } else {
             sGpRaceResultsState = GP_RESULTS_END_MENU;
@@ -5092,10 +5104,10 @@ Gfx* Menus_DrawGpResultsTotalRanking(Gfx* gfx, s32 playerIndex) {
     }
 
 #ifndef EXPANSION_KIT
-    if ((gGameMode == GAMEMODE_GP_RACE) && (sPlayerResultsTimer[playerIndex] == 60) && (gRacerIdsByPosition[0] == 0) &&
+    if (GAMEMODE_IS_GP(gGameMode) && (sPlayerResultsTimer[playerIndex] == 60) && (gRacerIdsByPosition[0] == 0) &&
         ((gCourseIndex % 6) == 5) && (gCupType <= X_CUP)) {
 #else
-    if ((gGameMode == GAMEMODE_GP_RACE) && (sPlayerResultsTimer[playerIndex] == 60) && (gRacerIdsByPosition[0] == 0) &&
+    if (GAMEMODE_IS_GP(gGameMode) && (sPlayerResultsTimer[playerIndex] == 60) && (gRacerIdsByPosition[0] == 0) &&
         ((gCourseIndex % 6) == 5)) {
 #endif
         func_8007DEF0();
@@ -5351,7 +5363,7 @@ Gfx* Menus_Draw(Gfx* gfx) {
             gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 12, 8, 308, 232);
         }
 
-        if ((gNumPlayers != 1) || (gGameMode != GAMEMODE_GP_RACE) || (sPlayer1Lives > 0) ||
+        if ((gNumPlayers != 1) || (!GAMEMODE_IS_GP(gGameMode)) || (sPlayer1Lives > 0) ||
             (sPlayerGameoverState[0] < PLAYER_GAMEOVER_DISPLAY)) {
             if (!((gNumPlayers == 1) && (sPlayerFinishState[0] == PLAYER_FINISH_SUCCESS_COMPLETE)) &&
                 !((gNumPlayers == 1) && (gCameras[playerIndex].mode == CAMERA_MODE_FINISHED_LOSER) &&
@@ -5406,7 +5418,7 @@ Gfx* Menus_Draw(Gfx* gfx) {
              (gCameras[playerIndex].mode == CAMERA_MODE_RACE)) &&
             (sPlayerGameoverState[0] == PLAYER_GAMEOVER_NONE)) {
             averageSpeed = gRacers[playerIndex].raceDistance / gRacers[playerIndex].raceTime;
-            if (gGameMode == GAMEMODE_GP_RACE) {
+            if (GAMEMODE_IS_GP(gGameMode)) {
                 if (gRaceTimeIntervalToggle) {
                     if ((averageSpeed > 0.1f) && (gRacersRemaining >= 2)) {
                         if (gRacers[playerIndex].position != 1) {
@@ -5527,7 +5539,7 @@ Gfx* Menus_Draw(Gfx* gfx) {
                     if (i > 160) {
                         i = 160;
                     }
-                    if ((gGameMode == GAMEMODE_GP_RACE) || (gGameMode == GAMEMODE_PRACTICE) ||
+                    if (GAMEMODE_IS_GP(gGameMode) || (gGameMode == GAMEMODE_PRACTICE) ||
                         (gGameMode == GAMEMODE_DEATH_RACE)) {
                         gfx = Menus_DrawRaceIntroDisplay(gfx, i, 93, j);
                         if ((gGameMode == GAMEMODE_DEATH_RACE) && (gCurrentCourseInfo->timeRecord[0] != MAX_TIMER)) {
@@ -5618,7 +5630,7 @@ Gfx* Menus_Draw(Gfx* gfx) {
                         }
                     }
                 }
-            } else if (gGameMode == GAMEMODE_GP_RACE) {
+            } else if (GAMEMODE_IS_GP(gGameMode)) {
                 switch (sGpRaceResultsState) {
                     case GP_RESULTS_TOP_6_TIMING:
                         gfx = Menus_DrawCourseName(gfx, 160, 200, 0);
@@ -5675,7 +5687,8 @@ Gfx* Menus_Draw(Gfx* gfx) {
 
         // CRASHED
         if (!(gRacers[playerIndex].stateFlags & RACER_STATE_FINISHED) &&
-            (gRacers[playerIndex].stateFlags & RACER_STATE_CRASHED)) {
+            (gRacers[playerIndex].stateFlags & RACER_STATE_CRASHED) &&
+            !((gGameMode == GAMEMODE_ARCADE) && (sPlayerFinishState[0] == PLAYER_FINISH_SUCCESS_COMPLETE))) {
             if (sPlayerGameoverState[0] == PLAYER_GAMEOVER_NONE) {
                 sPlayerRetireTimer[0] = 0;
                 sPlayerRetireRelativeLeftPos[0] = 200.0f;
@@ -5694,20 +5707,24 @@ Gfx* Menus_Draw(Gfx* gfx) {
             } else {
                 gfx = Menus_DrawPlayerRetire(gfx, 0);
                 if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
-                    if (gGameMode == GAMEMODE_GP_RACE) {
+                    if (GAMEMODE_IS_GP(gGameMode)) {
 #if BUILD_REVISION <= REVISION_A
                         if (sPlayerRetireTimer[0] > 400) {
 #else
                         if (sPlayerRetireTimer[0] == 400) {
 #endif
-                            if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
-                                Audio_LevelSEFadeout();
+                            if ((gGameMode == GAMEMODE_ARCADE) && (sPlayer1Lives <= 0)) {
+                                sPlayerFinishState[0] = PLAYER_FINISH_SUCCESS_COMPLETE;
+                            } else {
+                                if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
+                                    Audio_LevelSEFadeout();
+                                }
+                                if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
+                                    func_8007E0CC();
+                                }
+                                sMenuIsBusy = true;
+                                sMenuStateFlags |= MENU_STATE_RETIRE_RESTART;
                             }
-                            if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
-                                func_8007E0CC();
-                            }
-                            sMenuIsBusy = true;
-                            sMenuStateFlags |= MENU_STATE_RETIRE_RESTART;
                         }
                     } else if (sPlayerRetireTimer[0] > 200) {
                         if (gGameMode != GAMEMODE_DEATH_RACE) {
@@ -5808,7 +5825,7 @@ Gfx* Menus_Draw(Gfx* gfx) {
     }
     if (gTitleDemoState == TITLE_DEMO_INACTIVE) {
         if (gGamePaused) {
-            if (gGameMode == GAMEMODE_GP_RACE) {
+            if (GAMEMODE_IS_GP(gGameMode)) {
                 gfx = Menus_DrawGpRacePause(gfx);
             } else if (gGameMode == GAMEMODE_DEATH_RACE) {
                 gfx = Menus_DrawDeathRacePause(gfx);
